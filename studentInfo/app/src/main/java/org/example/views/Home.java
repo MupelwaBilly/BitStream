@@ -1,5 +1,6 @@
 package org.example.views;
 
+import java.io.File;
 import java.net.URL;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,9 +15,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.controllers.ImportHandler;
 import org.example.controllers.StudentHandler;
 
 public class Home {
@@ -26,32 +30,58 @@ public class Home {
     public void homePage(Stage stage) {
         StudentTable tableUI = new StudentTable();
 
-        Label label = new Label("Total Students");
-        label.getStyleClass().addAll("sub-heading", "text");
+        Label label = new Label("Total Students: ");
+        label.getStyleClass().add("sub-heading");
         studentNumberLabel = new Label();
-        studentNumberLabel.getStyleClass().addAll("heading", "text");
+        studentNumberLabel.getStyleClass().add("heading");
         updateStudentCount();
 
-        VBox studentInfoCard = new VBox(label, studentNumberLabel);
-        studentInfoCard.getStyleClass().add("displayCards");
-        studentInfoCard.setAlignment(Pos.CENTER);
-        HBox.setHgrow(studentInfoCard, Priority.ALWAYS);
+        HBox studentInfoCard = new HBox(8, label, studentNumberLabel);
+        studentInfoCard.getStyleClass().add("count-badge");
+        studentInfoCard.setAlignment(Pos.CENTER_LEFT);
 
+        // Import Button
+        Button importBtn = new Button("Import Data");
+        importBtn.getStyleClass().add("action-btn");
+        importBtn.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Import Student File");
+            fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Supported Files (*.csv, *.json, *.xlsx, *.xls, *.accdb, *.mdb)",
+                    "*.csv", "*.json", "*.xlsx", "*.xls", "*.accdb", "*.mdb"),
+                new FileChooser.ExtensionFilter("CSV Files (*.csv)", "*.csv"),
+                new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json"),
+                new FileChooser.ExtensionFilter("Excel Files (*.xlsx, *.xls)", "*.xlsx", "*.xls"),
+                new FileChooser.ExtensionFilter("MS Access Databases (*.accdb, *.mdb)", "*.accdb", "*.mdb")
+            );
+
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                try {
+                    int importedCount = ImportHandler.importFile(selectedFile);
+                    tableUI.refreshTable();
+                    updateStudentCount();
+                    showAlert(Alert.AlertType.INFORMATION, "Import Successful", "Successfully imported " + importedCount + " students.");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Import Failed", "Error processing file: " + e.getMessage());
+                }
+            }
+        });
+
+        // Green Add Button
         ImageView addico = new ImageView();
         URL imgUrl = getClass().getResource("images/add.png");
         if (imgUrl != null) {
             addico.setImage(new Image(imgUrl.toExternalForm()));
-            addico.setFitWidth(32);
-            addico.setFitHeight(32);
+            addico.setFitWidth(16);
+            addico.setFitHeight(16);
             addico.setPreserveRatio(true);
         }
 
-        VBox addBtn = new VBox(addico);
-        addBtn.getStyleClass().add("displayCards");
-        addBtn.setAlignment(Pos.CENTER);
-        HBox.setHgrow(addBtn, Priority.ALWAYS);
+        Button addBtn = new Button("Add Student", addico);
+        addBtn.getStyleClass().addAll("action-btn", "btn-create");
 
-        addBtn.setOnMouseClicked(event -> {
+        addBtn.setOnAction(event -> {
             Stage addStudentWindow = new Stage();
             addStudentWindow.initModality(Modality.APPLICATION_MODAL);
             addStudentWindow.setTitle("Add New Student");
@@ -140,22 +170,21 @@ public class Home {
             addStudentWindow.show();
         });
 
-        VBox editBtn = new VBox();
-        editBtn.getStyleClass().add("displayCards");
-        editBtn.setAlignment(Pos.CENTER);
-        HBox.setHgrow(editBtn, Priority.ALWAYS);
+        // Red-Orange Edit Button
+        Button editBtn = new Button("Edit Student");
+        editBtn.getStyleClass().addAll("action-btn", "btn-edit");
 
-        Label editLabel = new Label("Edit Student");
-        editLabel.getStyleClass().addAll("sub-heading", "text");
-        editBtn.getChildren().add(editLabel);
-
-        editBtn.setOnMouseClicked(event -> {
+        editBtn.setOnAction(event -> {
             new ModifyStudent().openModifyWindow(tableUI, this::updateStudentCount, this::applyStylesheet);
         });
 
-        HBox toolbarContainer = new HBox(15);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox toolbarContainer = new HBox(12);
+        toolbarContainer.setAlignment(Pos.CENTER_LEFT);
         toolbarContainer.setPadding(new Insets(15));
-        toolbarContainer.getChildren().addAll(studentInfoCard, addBtn, editBtn);
+        toolbarContainer.getChildren().addAll(studentInfoCard, spacer, importBtn, addBtn, editBtn);
 
         BorderPane root = new BorderPane();
         root.setTop(toolbarContainer);

@@ -4,136 +4,149 @@
     -fx-background-color: #f3f3f3;
 }
 
-/* Card Containers with Subtle Border & Depth */
-.displayCards {
+/* Compact Student Counter Badge */
+.count-badge {
     -fx-background-color: #ffffff;
-    -fx-background-radius: 8px;
-    -fx-border-color: #e5e5e5;
-    -fx-border-radius: 8px;
+    -fx-background-radius: 6px;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 6px;
     -fx-border-width: 1px;
-    -fx-padding: 12px 16px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 8, 0, 0, 2);
-}
-
-.displayCards:hover {
-    -fx-background-color: #fcfcfc;
-    -fx-border-color: #0067c0;
+    -fx-padding: 6px 14px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 4, 0, 0, 1);
 }
 
 .heading {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1b1b1b;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #000000;
 }
 
 .sub-heading {
     -fx-font-size: 13px;
-    -fx-text-fill: #5d5d5d;
-    -fx-font-weight: 600;
+    -fx-text-fill: #000000;
+    -fx-font-weight: 700;
 }
 
-/* Text Inputs with Bottom Accent Highlight */
+/* Base Button Styling Override */
+.button {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 6px;
+    -fx-border-color: #b0b0b0;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #000000;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 8px 18px;
+    -fx-cursor: hand;
+}
+
+/* Force Green Background on Add Student Button */
+.button.btn-create {
+    -fx-background-color: #008a00 !important;
+    -fx-border-color: #005a00 !important;
+    -fx-text-fill: #ffffff !important;
+}
+
+.button.btn-create:hover {
+    -fx-background-color: #00a000 !important;
+}
+
+.button.btn-create:pressed {
+    -fx-background-color: #006e00 !important;
+}
+
+/* Force Red-Orange Background on Edit Student Button */
+.button.btn-edit {
+    -fx-background-color: #d83b01 !important;
+    -fx-border-color: #a32c00 !important;
+    -fx-text-fill: #ffffff !important;
+}
+
+.button.btn-edit:hover {
+    -fx-background-color: #ea4300 !important;
+}
+
+.button.btn-edit:pressed {
+    -fx-background-color: #b33000 !important;
+}
+
+/* Standard Modal Window Buttons */
+.button-primary {
+    -fx-background-color: #008a00 !important;
+    -fx-border-color: #005a00 !important;
+    -fx-text-fill: #ffffff !important;
+}
+
+.button-primary:hover {
+    -fx-background-color: #00a000 !important;
+}
+
+.button-danger {
+    -fx-background-color: #c42b1c !important;
+    -fx-border-color: #8b0000 !important;
+    -fx-text-fill: #ffffff !important;
+}
+
+.button-danger:hover {
+    -fx-background-color: #e81123 !important;
+}
+
+/* Text Inputs with Solid Black Text */
 .text-field {
     -fx-background-color: #ffffff;
     -fx-background-radius: 4px;
-    -fx-border-color: #e5e5e5;
+    -fx-border-color: #aaaaaa;
     -fx-border-radius: 4px;
     -fx-border-width: 1px 1px 2px 1px;
     -fx-padding: 8px 12px;
     -fx-font-size: 13px;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #666666;
 }
 
 .text-field:focused {
-    -fx-border-color: #0067c0;
+    -fx-border-color: #008a00;
     -fx-border-width: 1px 1px 2px 1px;
 }
 
-/* Base Button */
-.button {
-    -fx-background-color: #fcfcfc;
-    -fx-background-radius: 4px;
-    -fx-border-color: #e5e5e5;
-    -fx-border-radius: 4px;
-    -fx-border-width: 1px;
-    -fx-text-fill: #1b1b1b;
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-    -fx-padding: 6px 16px;
-    -fx-cursor: hand;
-}
-
-.button:hover {
-    -fx-background-color: #f5f5f5;
-    -fx-border-color: #cccccc;
-}
-
-.button:pressed {
-    -fx-background-color: #e0e0e0;
-}
-
-/* Primary Accent Button (Save/Create) */
-.button-primary {
-    -fx-background-color: #0067c0;
-    -fx-border-color: #005fb8;
-    -fx-text-fill: #ffffff;
-}
-
-.button-primary:hover {
-    -fx-background-color: #1875d1;
-}
-
-.button-primary:pressed {
-    -fx-background-color: #005fb8;
-}
-
-/* Danger Button (Delete) */
-.button-danger {
-    -fx-background-color: #c42b1c;
-    -fx-border-color: #b3261e;
-    -fx-text-fill: #ffffff;
-}
-
-.button-danger:hover {
-    -fx-background-color: #d83b2a;
-}
-
-/* Modern Fluent TableView */
+/* Modern TableView */
 .table-view {
-    -fx-background-color: transparent;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 8px;
-    -fx-border-color: #e5e5e5;
+    -fx-border-color: #cccccc;
     -fx-border-radius: 8px;
     -fx-padding: 0;
 }
 
 .table-view .column-header-background {
-    -fx-background-color: #f9f9f9;
+    -fx-background-color: #f0f0f0;
     -fx-background-radius: 8px 8px 0 0;
 }
 
 .table-view .column-header {
     -fx-background-color: transparent;
-    -fx-border-color: transparent #e5e5e5 transparent transparent;
+    -fx-border-color: transparent #cccccc transparent transparent;
     -fx-padding: 10px;
 }
 
 .table-view .column-header .label {
     -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #5d5d5d;
+    -fx-font-weight: 800;
+    -fx-text-fill: #000000;
 }
 
 .table-row-cell {
     -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #f0f0f0 transparent;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+    -fx-text-fill: #000000;
 }
 
 .table-row-cell:odd {
-    -fx-background-color: #fbfbfb;
+    -fx-background-color: #f7f7f7;
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #e5f3ff;
-    -fx-text-fill: #0067c0;
+    -fx-background-color: #e2f0d9;
+    -fx-text-fill: #000000;
 }

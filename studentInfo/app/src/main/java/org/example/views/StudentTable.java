@@ -25,17 +25,17 @@ public class StudentTable {
         TableColumn<Student, String> nameColumn = new TableColumn<>("Student Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<Student, Integer> yearColumn = new TableColumn<>("Year");
-        yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
-
         TableColumn<Student, String> programColumn = new TableColumn<>("Program");
         programColumn.setCellValueFactory(new PropertyValueFactory<>("program"));
 
-        // Replaced addAll(...) with individual add() calls to avoid Type Safety/varargs warnings
+        TableColumn<Student, Integer> yearColumn = new TableColumn<>("Year");
+        yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
+
+        // Swapped column order: ID -> Name -> Program -> Year
         table.getColumns().add(idColumn);
         table.getColumns().add(nameColumn);
-        table.getColumns().add(yearColumn);
         table.getColumns().add(programColumn);
+        table.getColumns().add(yearColumn);
         
         table.setItems(studentData);
 

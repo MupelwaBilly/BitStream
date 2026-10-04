@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -60,6 +61,23 @@ public class Home {
             layout.setPadding(new Insets(20));
 
             Label heading = new Label("Enter Student Details");
+
+            TextField idInput = new TextField();
+            idInput.setPromptText("Auto ID");
+            idInput.setDisable(true);
+
+            CheckBox modifyIdCheckbox = new CheckBox("Modify ID");
+            modifyIdCheckbox.setOnAction(e -> {
+                boolean selected = modifyIdCheckbox.isSelected();
+                idInput.setDisable(!selected);
+                if (!selected) {
+                    idInput.clear();
+                    idInput.setPromptText("Auto ID");
+                } else {
+                    idInput.setPromptText("Custom ID");
+                }
+            });
+
             TextField nameInput = new TextField();
             nameInput.setPromptText("Student Name");
             TextField programInput = new TextField();
@@ -72,9 +90,10 @@ public class Home {
                 String name = nameInput.getText().trim();
                 String program = programInput.getText().trim();
                 String yearStr = yearInput.getText().trim();
+                String idStr = idInput.getText().trim();
 
                 if (name.isEmpty() || program.isEmpty() || yearStr.isEmpty()) {
-                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in all fields.");
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in all required fields.");
                     return;
                 }
 
@@ -86,18 +105,39 @@ public class Home {
                     return;
                 }
 
-                if (StudentHandler.addStudent(name, year, program)) {
+                boolean success;
+                if (modifyIdCheckbox.isSelected()) {
+                    if (idStr.isEmpty()) {
+                        showAlert(Alert.AlertType.WARNING, "Validation Error", "Please enter a custom ID or uncheck 'Modify ID'.");
+                        return;
+                    }
+                    int customId;
+                    try {
+                        customId = Integer.parseInt(idStr);
+                    } catch (NumberFormatException ex) {
+                        showAlert(Alert.AlertType.ERROR, "Invalid Input", "ID must be a valid number.");
+                        return;
+                    }
+                    success = StudentHandler.addStudent(customId, name, year, program);
+                } else {
+                    success = StudentHandler.addStudent(name, year, program);
+                }
+
+                if (success) {
                     tableUI.refreshTable();
                     updateStudentCount();
                     showAlert(Alert.AlertType.INFORMATION, "Success", "Student added successfully!");
                     addStudentWindow.close();
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add student. Please try again.");
+                    showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add student (ID might already exist).");
                 }
             });
 
-            layout.getChildren().addAll(heading, nameInput, programInput, yearInput, submitBtn);
-            addStudentWindow.setScene(new Scene(layout, 400, 300));
+            HBox idBox = new HBox(10, idInput, modifyIdCheckbox);
+            idBox.setAlignment(Pos.CENTER);
+
+            layout.getChildren().addAll(heading, idBox, nameInput, programInput, yearInput, submitBtn);
+            addStudentWindow.setScene(new Scene(layout, 420, 350));
             addStudentWindow.show();
         });
 
@@ -123,7 +163,8 @@ public class Home {
         root.setTop(toolbarContainer);
         root.setCenter(tableUI.createTable());
 
-        Scene scene = new Scene(root, 640, 480);
+        // Updated window dimensions: 1080 width x 600 height
+        Scene scene = new Scene(root, 1080, 600);
         URL cssUrl = getClass().getResource("css/Home.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());

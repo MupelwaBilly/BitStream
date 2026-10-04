@@ -11,6 +11,7 @@ import org.example.models.Student;
 
 public class StudentHandler {
 
+    // Overloaded method to add student with auto-generated ID
     public static boolean addStudent(String name, int year, String program) {
         String sql = "INSERT INTO students(name, year, program) VALUES(?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
@@ -21,6 +22,22 @@ public class StudentHandler {
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error adding student: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Overloaded method to add student with a custom user-defined ID
+    public static boolean addStudent(int id, String name, int year, String program) {
+        String sql = "INSERT INTO students(id, name, year, program) VALUES(?, ?, ?, ?)";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, name);
+            pstmt.setInt(3, year);
+            pstmt.setString(4, program);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error adding student with custom ID: " + e.getMessage());
             return false;
         }
     }
@@ -66,17 +83,30 @@ public class StudentHandler {
         return null;
     }
 
-    public static boolean updateStudent(int id, String name, int year, String program) {
-        String sql = "UPDATE students SET name = ?, year = ?, program = ? WHERE id = ?";
+    public static boolean updateStudent(int currentId, int newId, String name, int year, String program) {
+        String sql = "UPDATE students SET id = ?, name = ?, year = ?, program = ? WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setInt(2, year);
-            pstmt.setString(3, program);
-            pstmt.setInt(4, id);
+            pstmt.setInt(1, newId);
+            pstmt.setString(2, name);
+            pstmt.setInt(3, year);
+            pstmt.setString(4, program);
+            pstmt.setInt(5, currentId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error updating student: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean deleteStudent(int id) {
+        String sql = "DELETE FROM students WHERE id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error deleting student: " + e.getMessage());
             return false;
         }
     }
@@ -93,16 +123,5 @@ public class StudentHandler {
             System.err.println("Error fetching count: " + e.getMessage());
         }
         return 0;
-    }
-    public static boolean deleteStudent(int id) {
-        String sql = "DELETE FROM students WHERE id = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error deleting student: " + e.getMessage());
-            return false;
-        }
     }
 }

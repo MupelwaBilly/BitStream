@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -31,6 +32,10 @@ public class ModifyStudent {
         idInput.setPromptText("Student ID");
         Button searchBtn = new Button("Search");
 
+        CheckBox modifyIdCheckbox = new CheckBox("Modify ID");
+        modifyIdCheckbox.setDisable(true);
+        modifyIdCheckbox.setOnAction(e -> idInput.setEditable(modifyIdCheckbox.isSelected()));
+
         TextField nameInput = new TextField();
         nameInput.setPromptText("Student Name");
         TextField programInput = new TextField();
@@ -40,12 +45,11 @@ public class ModifyStudent {
 
         Button saveBtn = new Button("Save Changes");
         saveBtn.setDisable(true);
-        
+
         Button deleteBtn = new Button("Delete Student");
         deleteBtn.setDisable(true);
         deleteBtn.setStyle("-fx-background-color: #ff4c4c; -fx-text-fill: white;");
 
-        // Group the action buttons together horizontally
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.getChildren().addAll(saveBtn, deleteBtn);
@@ -73,12 +77,18 @@ public class ModifyStudent {
                 showAlert(Alert.AlertType.INFORMATION, "Not Found", "No student found with ID: " + id);
                 saveBtn.setDisable(true);
                 deleteBtn.setDisable(true);
+                modifyIdCheckbox.setDisable(true);
             } else {
                 heading.setText("Editing: " + student.getName());
                 nameInput.setText(student.getName());
                 programInput.setText(student.getProgram());
                 yearInput.setText(String.valueOf(student.getYear()));
                 currentId[0] = id;
+                
+                // Lock ID input until "Modify ID" is checked
+                idInput.setEditable(false);
+                modifyIdCheckbox.setSelected(false);
+                modifyIdCheckbox.setDisable(false);
                 saveBtn.setDisable(false);
                 deleteBtn.setDisable(false);
             }
@@ -88,21 +98,24 @@ public class ModifyStudent {
             String name = nameInput.getText().trim();
             String program = programInput.getText().trim();
             String yearStr = yearInput.getText().trim();
+            String idStr = idInput.getText().trim();
 
-            if (name.isEmpty() || program.isEmpty() || yearStr.isEmpty()) {
+            if (name.isEmpty() || program.isEmpty() || yearStr.isEmpty() || idStr.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in all fields.");
                 return;
             }
 
             int year;
+            int targetId;
             try {
                 year = Integer.parseInt(yearStr);
+                targetId = Integer.parseInt(idStr);
             } catch (NumberFormatException ex) {
-                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Year must be a valid number.");
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "ID and Year must be valid numbers.");
                 return;
             }
 
-            if (StudentHandler.updateStudent(currentId[0], name, year, program)) {
+            if (StudentHandler.updateStudent(currentId[0], targetId, name, year, program)) {
                 tableUI.refreshTable();
                 if (onUpdateCallback != null) {
                     onUpdateCallback.run();
@@ -110,7 +123,7 @@ public class ModifyStudent {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Student updated successfully!");
                 modifyWindow.close();
             } else {
-                showAlert(Alert.AlertType.ERROR, "Database Error", "Update failed. Try again.");
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Update failed. Target ID might already belong to another student.");
             }
         });
 
@@ -136,8 +149,11 @@ public class ModifyStudent {
             });
         });
 
-        layout.getChildren().addAll(heading, idInput, searchBtn, nameInput, programInput, yearInput, buttonBox);
-        modifyWindow.setScene(new Scene(layout, 400, 450));
+        HBox idBox = new HBox(10, idInput, searchBtn, modifyIdCheckbox);
+        idBox.setAlignment(Pos.CENTER);
+
+        layout.getChildren().addAll(heading, idBox, nameInput, programInput, yearInput, buttonBox);
+        modifyWindow.setScene(new Scene(layout, 480, 420));
         modifyWindow.show();
     }
 

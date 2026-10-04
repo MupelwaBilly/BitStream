@@ -15,7 +15,8 @@ public class StudentTable {
 
     public TableView<Student> createTable() {
         TableView<Student> table = new TableView<>();
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<Student, Integer> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -30,7 +31,12 @@ public class StudentTable {
         TableColumn<Student, String> programColumn = new TableColumn<>("Program");
         programColumn.setCellValueFactory(new PropertyValueFactory<>("program"));
 
-        table.getColumns().addAll(idColumn, nameColumn, yearColumn, programColumn);
+        // Replaced addAll(...) with individual add() calls to avoid Type Safety/varargs warnings
+        table.getColumns().add(idColumn);
+        table.getColumns().add(nameColumn);
+        table.getColumns().add(yearColumn);
+        table.getColumns().add(programColumn);
+        
         table.setItems(studentData);
 
         refreshTable();

@@ -5,8 +5,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,6 +40,15 @@ public class ModifyStudent {
 
         Button saveBtn = new Button("Save Changes");
         saveBtn.setDisable(true);
+        
+        Button deleteBtn = new Button("Delete Student");
+        deleteBtn.setDisable(true);
+        deleteBtn.setStyle("-fx-background-color: #ff4c4c; -fx-text-fill: white;");
+
+        // Group the action buttons together horizontally
+        HBox buttonBox = new HBox(15);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.getChildren().addAll(saveBtn, deleteBtn);
 
         final int[] currentId = {-1};
 
@@ -61,6 +72,7 @@ public class ModifyStudent {
             if (student == null) {
                 showAlert(Alert.AlertType.INFORMATION, "Not Found", "No student found with ID: " + id);
                 saveBtn.setDisable(true);
+                deleteBtn.setDisable(true);
             } else {
                 heading.setText("Editing: " + student.getName());
                 nameInput.setText(student.getName());
@@ -68,6 +80,7 @@ public class ModifyStudent {
                 yearInput.setText(String.valueOf(student.getYear()));
                 currentId[0] = id;
                 saveBtn.setDisable(false);
+                deleteBtn.setDisable(false);
             }
         });
 
@@ -101,8 +114,30 @@ public class ModifyStudent {
             }
         });
 
-        layout.getChildren().addAll(heading, idInput, searchBtn, nameInput, programInput, yearInput, saveBtn);
-        modifyWindow.setScene(new Scene(layout, 400, 400));
+        deleteBtn.setOnAction(e -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirm Deletion");
+            confirm.setHeaderText(null);
+            confirm.setContentText("Are you sure you want to delete this student? This cannot be undone.");
+
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    if (StudentHandler.deleteStudent(currentId[0])) {
+                        tableUI.refreshTable();
+                        if (onUpdateCallback != null) {
+                            onUpdateCallback.run();
+                        }
+                        showAlert(Alert.AlertType.INFORMATION, "Success", "Student deleted successfully!");
+                        modifyWindow.close();
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to delete student.");
+                    }
+                }
+            });
+        });
+
+        layout.getChildren().addAll(heading, idInput, searchBtn, nameInput, programInput, yearInput, buttonBox);
+        modifyWindow.setScene(new Scene(layout, 400, 450));
         modifyWindow.show();
     }
 

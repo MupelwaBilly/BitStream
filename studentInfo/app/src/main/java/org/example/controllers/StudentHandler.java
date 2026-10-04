@@ -94,4 +94,15 @@ public class StudentHandler {
         }
         return 0;
     }
+    public static boolean deleteStudent(int id) {
+        String sql = "DELETE FROM students WHERE id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error deleting student: " + e.getMessage());
+            return false;
+        }
+    }
 }

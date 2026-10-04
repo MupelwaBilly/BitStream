@@ -1,54 +1,139 @@
+/* Windows 11 Global Font & Surface */
 .root {
-  -fx-background-color: #ffffff;
-  -fx-padding: 20px;
+    -fx-font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
+    -fx-background-color: #f3f3f3;
 }
 
-.label {
-  -fx-text-fill: black;
-  -fx-font-family: "Arial";
-  -fx-font-size: 16px;
-}
-
-.button {
-  -fx-background-color: #0078d7;
-  -fx-text-fill: white;
-  -fx-font-weight: bold;
-  -fx-padding: 8px 16px;
-  -fx-background-radius: 4px;
-  -fx-cursor: hand;
-}
-
-.button:hover {
-  -fx-background-color: #005a9e;
-}
-
-#title-label {
-  -fx-text-fill: #ffcc00;
-  -fx-font-size: 24px;
-  -fx-font-weight: bold;
-}
-
-.toolbarContainer {
-  -fx-background-color: #ffffff;
-
-}
-
+/* Card Containers with Subtle Border & Depth */
 .displayCards {
-  -fx-background-radius: 10px;
-  -fx-border-color: #121212;
-  -fx-border-width: 1px;
-  -fx-border-style: solid;
-  -fx-border-radius: 10px;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 16px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 8, 0, 0, 2);
+}
+
+.displayCards:hover {
+    -fx-background-color: #fcfcfc;
+    -fx-border-color: #0067c0;
 }
 
 .heading {
-  -fx-font-size: 32px;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1b1b1b;
 }
 
 .sub-heading {
-  -fx-font-size: 12px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #5d5d5d;
+    -fx-font-weight: 600;
 }
 
-.text {
-  color: #000000;
+/* Text Inputs with Bottom Accent Highlight */
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 4px;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px 1px 2px 1px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused {
+    -fx-border-color: #0067c0;
+    -fx-border-width: 1px 1px 2px 1px;
+}
+
+/* Base Button */
+.button {
+    -fx-background-color: #fcfcfc;
+    -fx-background-radius: 4px;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #1b1b1b;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 6px 16px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #cccccc;
+}
+
+.button:pressed {
+    -fx-background-color: #e0e0e0;
+}
+
+/* Primary Accent Button (Save/Create) */
+.button-primary {
+    -fx-background-color: #0067c0;
+    -fx-border-color: #005fb8;
+    -fx-text-fill: #ffffff;
+}
+
+.button-primary:hover {
+    -fx-background-color: #1875d1;
+}
+
+.button-primary:pressed {
+    -fx-background-color: #005fb8;
+}
+
+/* Danger Button (Delete) */
+.button-danger {
+    -fx-background-color: #c42b1c;
+    -fx-border-color: #b3261e;
+    -fx-text-fill: #ffffff;
+}
+
+.button-danger:hover {
+    -fx-background-color: #d83b2a;
+}
+
+/* Modern Fluent TableView */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 8px;
+    -fx-padding: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f9f9f9;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #e5e5e5 transparent transparent;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5d5d5d;
+}
+
+.table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #fbfbfb;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #e5f3ff;
+    -fx-text-fill: #0067c0;
 }

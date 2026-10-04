@@ -33,7 +33,7 @@ public class Home {
         updateStudentCount();
 
         VBox studentInfoCard = new VBox(label, studentNumberLabel);
-        studentInfoCard.getStyleClass().addAll("displayCards", "addbtn");
+        studentInfoCard.getStyleClass().add("displayCards");
         studentInfoCard.setAlignment(Pos.CENTER);
         HBox.setHgrow(studentInfoCard, Priority.ALWAYS);
 
@@ -41,8 +41,8 @@ public class Home {
         URL imgUrl = getClass().getResource("images/add.png");
         if (imgUrl != null) {
             addico.setImage(new Image(imgUrl.toExternalForm()));
-            addico.setFitWidth(40);
-            addico.setFitHeight(40);
+            addico.setFitWidth(32);
+            addico.setFitHeight(32);
             addico.setPreserveRatio(true);
         }
 
@@ -61,6 +61,7 @@ public class Home {
             layout.setPadding(new Insets(20));
 
             Label heading = new Label("Enter Student Details");
+            heading.getStyleClass().add("sub-heading");
 
             TextField idInput = new TextField();
             idInput.setPromptText("Auto ID");
@@ -70,12 +71,8 @@ public class Home {
             modifyIdCheckbox.setOnAction(e -> {
                 boolean selected = modifyIdCheckbox.isSelected();
                 idInput.setDisable(!selected);
-                if (!selected) {
-                    idInput.clear();
-                    idInput.setPromptText("Auto ID");
-                } else {
-                    idInput.setPromptText("Custom ID");
-                }
+                idInput.setPromptText(selected ? "Custom ID" : "Auto ID");
+                if (!selected) idInput.clear();
             });
 
             TextField nameInput = new TextField();
@@ -86,6 +83,7 @@ public class Home {
             yearInput.setPromptText("Student Year");
 
             Button submitBtn = new Button("Create");
+            submitBtn.getStyleClass().add("button-primary");
             submitBtn.setOnAction(e -> {
                 String name = nameInput.getText().trim();
                 String program = programInput.getText().trim();
@@ -111,14 +109,13 @@ public class Home {
                         showAlert(Alert.AlertType.WARNING, "Validation Error", "Please enter a custom ID or uncheck 'Modify ID'.");
                         return;
                     }
-                    int customId;
                     try {
-                        customId = Integer.parseInt(idStr);
+                        int customId = Integer.parseInt(idStr);
+                        success = StudentHandler.addStudent(customId, name, year, program);
                     } catch (NumberFormatException ex) {
                         showAlert(Alert.AlertType.ERROR, "Invalid Input", "ID must be a valid number.");
                         return;
                     }
-                    success = StudentHandler.addStudent(customId, name, year, program);
                 } else {
                     success = StudentHandler.addStudent(name, year, program);
                 }
@@ -137,7 +134,9 @@ public class Home {
             idBox.setAlignment(Pos.CENTER);
 
             layout.getChildren().addAll(heading, idBox, nameInput, programInput, yearInput, submitBtn);
-            addStudentWindow.setScene(new Scene(layout, 420, 350));
+            Scene addScene = new Scene(layout, 420, 350);
+            applyStylesheet(addScene);
+            addStudentWindow.setScene(addScene);
             addStudentWindow.show();
         });
 
@@ -151,24 +150,20 @@ public class Home {
         editBtn.getChildren().add(editLabel);
 
         editBtn.setOnMouseClicked(event -> {
-            new ModifyStudent().openModifyWindow(tableUI, this::updateStudentCount);
+            new ModifyStudent().openModifyWindow(tableUI, this::updateStudentCount, this::applyStylesheet);
         });
 
         HBox toolbarContainer = new HBox(15);
-        toolbarContainer.getStyleClass().add("toolbarContainer");
-        toolbarContainer.setPadding(new Insets(10));
+        toolbarContainer.setPadding(new Insets(15));
         toolbarContainer.getChildren().addAll(studentInfoCard, addBtn, editBtn);
 
         BorderPane root = new BorderPane();
         root.setTop(toolbarContainer);
         root.setCenter(tableUI.createTable());
+        BorderPane.setMargin(root.getCenter(), new Insets(0, 15, 15, 15));
 
-        // Updated window dimensions: 1080 width x 600 height
         Scene scene = new Scene(root, 1080, 600);
-        URL cssUrl = getClass().getResource("css/Home.css");
-        if (cssUrl != null) {
-            scene.getStylesheets().add(cssUrl.toExternalForm());
-        }
+        applyStylesheet(scene);
 
         stage.setTitle("BitStream");
         stage.setScene(scene);
@@ -178,6 +173,13 @@ public class Home {
     private void updateStudentCount() {
         int count = StudentHandler.getStudentCount();
         studentNumberLabel.setText(String.valueOf(count));
+    }
+
+    public void applyStylesheet(Scene scene) {
+        URL cssUrl = getClass().getResource("css/Home.css");
+        if (cssUrl != null) {
+            scene.getStylesheets().add(cssUrl.toExternalForm());
+        }
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {

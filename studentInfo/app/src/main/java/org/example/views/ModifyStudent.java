@@ -1,5 +1,6 @@
 package org.example.views;
 
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +19,7 @@ import org.example.models.Student;
 
 public class ModifyStudent {
 
-    public void openModifyWindow(StudentTable tableUI, Runnable onUpdateCallback) {
+    public void openModifyWindow(StudentTable tableUI, Runnable onUpdateCallback, Consumer<Scene> styleConsumer) {
         Stage modifyWindow = new Stage();
         modifyWindow.initModality(Modality.APPLICATION_MODAL);
         modifyWindow.setTitle("Modify Student Details");
@@ -28,6 +29,8 @@ public class ModifyStudent {
         layout.setPadding(new Insets(20));
 
         Label heading = new Label("Enter Student ID to Edit");
+        heading.getStyleClass().add("sub-heading");
+
         TextField idInput = new TextField();
         idInput.setPromptText("Student ID");
         Button searchBtn = new Button("Search");
@@ -44,11 +47,12 @@ public class ModifyStudent {
         yearInput.setPromptText("Student Year");
 
         Button saveBtn = new Button("Save Changes");
+        saveBtn.getStyleClass().add("button-primary");
         saveBtn.setDisable(true);
 
         Button deleteBtn = new Button("Delete Student");
+        deleteBtn.getStyleClass().add("button-danger");
         deleteBtn.setDisable(true);
-        deleteBtn.setStyle("-fx-background-color: #ff4c4c; -fx-text-fill: white;");
 
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
@@ -84,8 +88,7 @@ public class ModifyStudent {
                 programInput.setText(student.getProgram());
                 yearInput.setText(String.valueOf(student.getYear()));
                 currentId[0] = id;
-                
-                // Lock ID input until "Modify ID" is checked
+
                 idInput.setEditable(false);
                 modifyIdCheckbox.setSelected(false);
                 modifyIdCheckbox.setDisable(false);
@@ -117,13 +120,11 @@ public class ModifyStudent {
 
             if (StudentHandler.updateStudent(currentId[0], targetId, name, year, program)) {
                 tableUI.refreshTable();
-                if (onUpdateCallback != null) {
-                    onUpdateCallback.run();
-                }
+                if (onUpdateCallback != null) onUpdateCallback.run();
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Student updated successfully!");
                 modifyWindow.close();
             } else {
-                showAlert(Alert.AlertType.ERROR, "Database Error", "Update failed. Target ID might already belong to another student.");
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Update failed. Target ID might belong to another student.");
             }
         });
 
@@ -131,15 +132,13 @@ public class ModifyStudent {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Confirm Deletion");
             confirm.setHeaderText(null);
-            confirm.setContentText("Are you sure you want to delete this student? This cannot be undone.");
+            confirm.setContentText("Are you sure you want to delete this student?");
 
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     if (StudentHandler.deleteStudent(currentId[0])) {
                         tableUI.refreshTable();
-                        if (onUpdateCallback != null) {
-                            onUpdateCallback.run();
-                        }
+                        if (onUpdateCallback != null) onUpdateCallback.run();
                         showAlert(Alert.AlertType.INFORMATION, "Success", "Student deleted successfully!");
                         modifyWindow.close();
                     } else {
@@ -153,7 +152,11 @@ public class ModifyStudent {
         idBox.setAlignment(Pos.CENTER);
 
         layout.getChildren().addAll(heading, idBox, nameInput, programInput, yearInput, buttonBox);
-        modifyWindow.setScene(new Scene(layout, 480, 420));
+        Scene scene = new Scene(layout, 480, 420);
+        if (styleConsumer != null) {
+            styleConsumer.accept(scene);
+        }
+        modifyWindow.setScene(scene);
         modifyWindow.show();
     }
 

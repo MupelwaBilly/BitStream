@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -108,12 +107,8 @@ public class Home {
 
             TextField nameInput = new TextField();
             nameInput.setPromptText("Student Name (letters only)");
-            nameInput.setTextFormatter(new TextFormatter<String>(change ->
-                    change.getControlNewText().matches("[\\p{L} ]*") ? change : null));
             TextField programInput = new TextField();
             programInput.setPromptText("Student Program (letters only)");
-            programInput.setTextFormatter(new TextFormatter<String>(change ->
-                    change.getControlNewText().matches("[\\p{L} ]*") ? change : null));
             TextField yearInput = new TextField();
             yearInput.setPromptText("Student Year");
 
@@ -131,7 +126,7 @@ public class Home {
                 }
 
                 if (!name.matches("[\\p{L} ]+") || !program.matches("[\\p{L} ]+")) {
-                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Name and program may contain letters and spaces only.");
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Name and program must contain letters only. Spaces are allowed.");
                     return;
                 }
 

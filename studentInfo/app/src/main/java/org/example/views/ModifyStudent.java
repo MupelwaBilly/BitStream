@@ -10,6 +10,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -40,9 +41,13 @@ public class ModifyStudent {
         modifyIdCheckbox.setOnAction(e -> idInput.setEditable(modifyIdCheckbox.isSelected()));
 
         TextField nameInput = new TextField();
-        nameInput.setPromptText("Student Name");
+        nameInput.setPromptText("Student Name (letters only)");
+        nameInput.setTextFormatter(new TextFormatter<String>(change ->
+                change.getControlNewText().matches("[\\p{L} ]*") ? change : null));
         TextField programInput = new TextField();
-        programInput.setPromptText("Student Program");
+        programInput.setPromptText("Student Program (letters only)");
+        programInput.setTextFormatter(new TextFormatter<String>(change ->
+                change.getControlNewText().matches("[\\p{L} ]*") ? change : null));
         TextField yearInput = new TextField();
         yearInput.setPromptText("Student Year");
 
@@ -105,6 +110,11 @@ public class ModifyStudent {
 
             if (name.isEmpty() || program.isEmpty() || yearStr.isEmpty() || idStr.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in all fields.");
+                return;
+            }
+
+            if (!name.matches("[\\p{L} ]+") || !program.matches("[\\p{L} ]+")) {
+                showAlert(Alert.AlertType.WARNING, "Validation Error", "Name and program may contain letters and spaces only.");
                 return;
             }
 

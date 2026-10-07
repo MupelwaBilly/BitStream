@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -47,12 +48,12 @@ public class Home {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Import Student File");
             fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Files (*.csv, *.json, *.xlsx, *.xls, *.accdb, *.mdb)",
-                    "*.csv", "*.json", "*.xlsx", "*.xls", "*.accdb", "*.mdb"),
-                new FileChooser.ExtensionFilter("CSV Files (*.csv)", "*.csv"),
-                new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json"),
-                new FileChooser.ExtensionFilter("Excel Files (*.xlsx, *.xls)", "*.xlsx", "*.xls"),
-                new FileChooser.ExtensionFilter("MS Access Databases (*.accdb, *.mdb)", "*.accdb", "*.mdb")
+                    new FileChooser.ExtensionFilter("Supported Files (*.csv, *.json, *.xlsx, *.xls, *.accdb, *.mdb)",
+                            "*.csv", "*.json", "*.xlsx", "*.xls", "*.accdb", "*.mdb"),
+                    new FileChooser.ExtensionFilter("CSV Files (*.csv)", "*.csv"),
+                    new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json"),
+                    new FileChooser.ExtensionFilter("Excel Files (*.xlsx, *.xls)", "*.xlsx", "*.xls"),
+                    new FileChooser.ExtensionFilter("MS Access Databases (*.accdb, *.mdb)", "*.accdb", "*.mdb")
             );
 
             File selectedFile = fileChooser.showOpenDialog(stage);
@@ -106,9 +107,13 @@ public class Home {
             });
 
             TextField nameInput = new TextField();
-            nameInput.setPromptText("Student Name");
+            nameInput.setPromptText("Student Name (letters only)");
+            nameInput.setTextFormatter(new TextFormatter<String>(change ->
+                    change.getControlNewText().matches("[\\p{L} ]*") ? change : null));
             TextField programInput = new TextField();
-            programInput.setPromptText("Student Program");
+            programInput.setPromptText("Student Program (letters only)");
+            programInput.setTextFormatter(new TextFormatter<String>(change ->
+                    change.getControlNewText().matches("[\\p{L} ]*") ? change : null));
             TextField yearInput = new TextField();
             yearInput.setPromptText("Student Year");
 
@@ -122,6 +127,11 @@ public class Home {
 
                 if (name.isEmpty() || program.isEmpty() || yearStr.isEmpty()) {
                     showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in all required fields.");
+                    return;
+                }
+
+                if (!name.matches("[\\p{L} ]+") || !program.matches("[\\p{L} ]+")) {
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Name and program may contain letters and spaces only.");
                     return;
                 }
 
